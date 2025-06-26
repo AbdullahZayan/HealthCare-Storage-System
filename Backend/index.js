@@ -1,5 +1,19 @@
 import express from "express";
 import dotenv from "dotenv";
+import fs from "fs"; // 👈 Add the 'fs' module
+import path from "path";
+
+
+if (process.env.DIALOGFLOW_KEY_JSON) {
+  // On Vercel, the /tmp directory is writable
+  const keyFilePath = path.join('/tmp', 'dialogflow-key.json');
+  fs.writeFileSync(keyFilePath, process.env.DIALOGFLOW_KEY_JSON);
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = keyFilePath;
+} else {
+  // For local development, use the local file
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = "./dialogflow-key.json";
+}
+
 dotenv.config(); // 👈 this must come before anything that uses env
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "./dialogflow-key.json";
 
