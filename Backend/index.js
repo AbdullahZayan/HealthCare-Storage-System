@@ -21,16 +21,24 @@ require('dotenv').config();
 
 
 if (process.env.DIALOGFLOW_KEY_JSON) {
-  // On Vercel, the /tmp directory is writable
-  const keyFilePath = path.join('/tmp', 'dialogflow-key.json');
-  fs.writeFileSync(keyFilePath, process.env.DIALOGFLOW_KEY_JSON);
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = keyFilePath;
+  try {
+    const keyFilePath = path.join('/tmp', 'dialogflow-key.json');
+    fs.writeFileSync(keyFilePath, process.env.DIALOGFLOW_KEY_JSON);
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = keyFilePath;
+    console.log("✅ Dialogflow credentials written to /tmp/dialogflow-key.json");
+  } catch (err) {
+    console.error("❌ Failed to write Dialogflow key file:", err.message);
+  }
 } else {
-  // For local development, use the local file
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = "./dialogflow-key.json";
+  const localPath = path.resolve(__dirname, "dialogflow-key.json");
+  if (fs.existsSync(localPath)) {
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = localPath;
+    console.log("✅ Using local Dialogflow key file.");
+  } else {
+    console.error("❌ No Dialogflow credentials found!");
+  }
 }
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS = "./dialogflow-key.json";
 
 
 
