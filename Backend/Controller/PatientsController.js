@@ -99,7 +99,9 @@ const login = async (req, res) => {
 };
 
 // ===================== Profile Picture Upload =====================
-const profilePicturesDir = "uploads/profile_pictures";
+// const profilePicturesDir = "uploads/profile_pictures";
+const profilePicturesDir = path.join('/tmp', 'profile_pictures');
+
 if (!fs.existsSync(profilePicturesDir)) {
     fs.mkdirSync(profilePicturesDir, { recursive: true });
 }
