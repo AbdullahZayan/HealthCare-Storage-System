@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
+const mongoose = require("mongoose");
+
 
 const CommentSchema = new mongoose.Schema({
     text: { type: String, required: true },
@@ -15,4 +17,5 @@ const ReportSchema = new mongoose.Schema({
     comments: [CommentSchema]
 });
 
-export default mongoose.model("Report", ReportSchema);
+// export default mongoose.model("Report", ReportSchema);
+module.exports = mongoose.model("Report", ReportSchema)

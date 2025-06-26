@@ -1,5 +1,9 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs"; // Changed to bcryptjs for better compatibility
+// import mongoose from "mongoose";
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+
+
+// import bcrypt from "bcryptjs"; // Changed to bcryptjs for better compatibility
 
 const adminSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -14,7 +18,9 @@ adminSchema.pre("save", async function (next) {
   next();
 });
 
-const Admin = mongoose.model("Admin", adminSchema);
+// const Admin = mongoose.model("Admin", adminSchema);
+module.exports = mongoose.model("Admin", adminSchema)
 
 
-export { Admin };
+
+// export { Admin };

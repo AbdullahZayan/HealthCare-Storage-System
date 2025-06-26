@@ -1,15 +1,16 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   registerAdmin,
   loginAdmin,
   getAdminProfile,
   getAdminDashboard,
   getPatientFeedback,
   updatePatientStatus,
-  deletePatient
-} from "../Controller/AdminController.js";
-import { protectAdmin } from "../Middlewares/AdminMiddleware.js";
-import { getAllPatients } from "../Controller/AdminController.js";
+  deletePatient,
+  getAllPatients
+} = require("../Controller/AdminController.js");
+
+const { protectAdmin } = require("../Middlewares/AdminMiddleware.js");
 
 const router = express.Router();
 
@@ -22,4 +23,4 @@ router.put("/patients/update-status/:id", protectAdmin, updatePatientStatus);
 router.delete("/patients/:id", protectAdmin, deletePatient);
 router.get("/patients", protectAdmin, getAllPatients);
 
-export default router;
+module.exports = router;

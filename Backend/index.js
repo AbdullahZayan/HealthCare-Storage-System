@@ -1,60 +1,69 @@
-import express from "express";
-import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const Multer = require('multer');
+const fs = require("fs"); // 👈 Add the 'fs' module
+const path = require("path");
 
-// 1. Load environment variables from .env file FIRST.
-dotenv.config();
+const reportsRoutes = require("./Router/ReportsRouter.js");
+const patientsRoutes = require("./Router/PatientsRouter.js");
+const feedbackRoutes = require("./Router/FeedbackRouter.js");
+const adminRoutes = require("./Router/AdminRouter.js");
 
-// 2. Dynamically create Dialogflow key file for Vercel deployment.
-// This must run AFTER dotenv.config() and BEFORE any library that needs the key.
+const PatientModel = require("./Model/PatientsModel.js"); 
+const heartRateRoutes = require("./Router/HeartRateRouter.js");
+const dialogflowRoute = require("./Router/dialogFlow.js");
+
+// dotenv.config();
+require('dotenv').config();
+
+
+
+
 if (process.env.DIALOGFLOW_KEY_JSON) {
-  // On Vercel, the /tmp directory is the only writable directory.
+  // On Vercel, the /tmp directory is writable
   const keyFilePath = path.join('/tmp', 'dialogflow-key.json');
   fs.writeFileSync(keyFilePath, process.env.DIALOGFLOW_KEY_JSON);
   process.env.GOOGLE_APPLICATION_CREDENTIALS = keyFilePath;
 } else {
-  // For local development, use the local file as before.
+  // For local development, use the local file
   process.env.GOOGLE_APPLICATION_CREDENTIALS = "./dialogflow-key.json";
 }
 
-// 3. Import all other dependencies.
-import cors from "cors";
-import mongoose from "mongoose";
-import nodemailer from "nodemailer";
-// NOTE: "node-cron" has been removed as it's not suitable for Vercel.
-import reportsRoutes from "./Router/ReportsRouter.js";
-import patientsRoutes from "./Router/PatientsRouter.js";
-import feedbackRoutes from "./Router/FeedbackRouter.js";
-import adminRoutes from "./Router/AdminRouter.js";
-import PatientModel from "./Model/PatientsModel.js";
-import heartRateRoutes from "./Router/HeartRateRouter.js";
-import dialogflowRoute from "./Router/dialogFlow.js";
+process.env.GOOGLE_APPLICATION_CREDENTIALS = "./dialogflow-key.json";
 
+
+
+
+
+
+
+// express app
 const app = express();
-
-// Middleware
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
-console.log("🔍 Using Dialogflow Key Path:", process.env.GOOGLE_APPLICATION_CREDENTIALS);
 
-// Ensure critical environment variables are loaded
+mongoose.connect(process.env.MONGO_URI, {})
+    .then(() => {
+        console.log('connected to the database');
+        // listen to port
+        app.listen(process.env.PORT, () => {
+            console.log('listening for requests on port', process.env.PORT);
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
+// Ensure environment variables are loaded
 if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
-  console.error("❌ ERROR: Missing MONGO_URI or JWT_SECRET in environment variables!");
-  process.exit(1);
+  console.error("❌ ERROR: Missing MONGO_URI or JWT_SECRET in .env file!");
+  process.exit(1); // Stop the server if critical env vars are missing
 }
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("✅ MongoDB Connected Successfully!"))
-  .catch((err) => {
-    console.error("❌ MongoDB Connection Error:", err);
-    process.exit(1);
-  });
 
-// API Routes
+// Routes
 app.use("/api/patients", patientsRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/feedback", feedbackRoutes);
@@ -63,93 +72,82 @@ app.use("/api/heartrate", heartRateRoutes);
 app.use('/api/dialogflow', dialogflowRoute);
 
 // Serve static files from uploads folder
-// Note: This may not work as expected on Vercel's ephemeral filesystem.
-// For file storage, a service like Cloudinary or AWS S3 is recommended.
 app.use("/uploads", express.static("uploads"));
 
-// ============= Nodemailer setup =============
-// This transporter can be used by other parts of your app.
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-});
 
-// =================================================================
-// 4. NEW VERCEL CRON JOB ENDPOINT
-// This replaces the old `node-cron` scheduler.
-// Vercel will call this endpoint based on the schedule in `vercel.json`.
-// =================================================================
-app.get("/api/cron/send-reminders", async (req, res) => {
-  // Secure the endpoint with a secret key
-  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+// // ============= Nodemailer setup =============
+// const transporter = nodemailer.createTransport({
+//   service: "gmail", // or another service
+//   auth: {
+//     user: process.env.EMAIL_USER, // e.g. "youremail@gmail.com"
+//     pass: process.env.EMAIL_PASS  // e.g. "your-app-password"
+//   },
+// });
 
-  console.log("⏰ Running daily check-up reminder job via Vercel Cron...");
+// =========== Cron Job: runs daily at 00:00 (midnight) ===========
+// cron.schedule("0 9 * * *", async () => {
+//   console.log("⏰ Running daily check-up reminder job...");
 
-  try {
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+//   try {
+//     const oneYearAgo = new Date();
+//     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-    const patientsDue = await PatientModel.find({
-      lastCheckupDate: { $lte: oneYearAgo },
-      reminderSent: false,
-      status: "active"
-    });
+//     // --- MODIFIED QUERY ---
+//     // Find patients who meet ALL these conditions:
+//     // 1. Their last checkup was a year ago or more.
+//     // 2. A reminder has NOT been sent yet for this checkup.
+//     // 3. Their account is active.
+//     const patientsDue = await PatientModel.find({
+//       lastCheckupDate: { $lte: oneYearAgo },
+//       reminderSent: false,
+//       status: "active"
+//     });
 
-    if (patientsDue.length === 0) {
-      console.log("✅ No new reminders to send today.");
-      return res.status(200).json({ message: "No reminders to send." });
-    }
+//     if (patientsDue.length === 0) {
+//       console.log("✅ No new reminders to send today.");
+//       return;
+//     }
 
-    console.log(`Found ${patientsDue.length} patient(s) due for a reminder.`);
+//     console.log(`Found ${patientsDue.length} patient(s) due for a reminder.`);
 
-    const cronTransporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        secure: true,
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-        },
-    });
+//     // Re-use the transporter you already have defined above this block
+//     const transporter = nodemailer.createTransport({
+//         host: process.env.SMTP_HOST,
+//         port: process.env.SMTP_PORT,
+//         secure: true,
+//         auth: {
+//             user: process.env.SMTP_USER,
+//             pass: process.env.SMTP_PASS,
+//         },
+//     });
 
-    for (const patient of patientsDue) {
-      const mailOptions = {
-        from: `HealthCare Storage <${process.env.SMTP_FORM}>`,
-        to: patient.email,
-        subject: "Time for Your Annual Check-Up!",
-        html: `<h3>Hello ${patient.firstName},</h3>
-               <p>This is a friendly reminder that it has been one year since your last medical check-up on <strong>${patient.lastCheckupDate.toDateString()}</strong>.</p>
-               <p>Please book an appointment with your healthcare provider soon.</p>
-               <br/>
-               <p>Stay healthy,</p>
-               <p><strong>Your HealthCare Storage System</strong></p>`
-      };
+//     for (const patient of patientsDue) {
+//       const mailOptions = {
+//         from: `HealthCare Storage <${process.env.SMTP_FORM}>`, // A more professional "from" field
+//         to: patient.email,
+//         subject: "Time for Your Annual Check-Up!",
+//         html: `<h3>Hello ${patient.firstName},</h3>
+//                <p>This is a friendly reminder that it has been one year since your last medical check-up on <strong>${patient.lastCheckupDate.toDateString()}</strong>.</p>
+//                <p>Please book an appointment with your healthcare provider soon.</p>
+//                <br/>
+//                <p>Stay healthy,</p>
+//                <p><strong>Your HealthCare Storage System</strong></p>`
+//       };
 
-      await cronTransporter.sendMail(mailOptions);
-      console.log(`✅ Reminder email sent to ${patient.email}`);
+//       await transporter.sendMail(mailOptions);
+//       console.log(`✅ Reminder email sent to ${patient.email}`);
 
-      patient.reminderSent = true;
-      await patient.save();
-    }
-    
-    // Send a success response
-    res.status(200).json({ message: `Successfully sent ${patientsDue.length} reminder(s).` });
+//       // --- CRITICAL UPDATE ---
+//       // Instead of changing the date, we just flip the flag.
+//       // This preserves the actual checkup date history.
+//       patient.reminderSent = true;
+//       await patient.save();
+//     }
+//   } catch (error) {
+//     console.error("❌ Error in CRON job:", error);
+//   }
+// }, {
+//   timezone: "Asia/Riyadh", // Your timezone is correct
+// });
 
-  } catch (error) {
-    console.error("❌ Error in Vercel CRON job:", error);
-    // Send an error response
-    res.status(500).json({ message: "Cron job failed.", error: error.message });
-  }
-});
-
-// Start the server for local development
-// Vercel ignores this and uses its own serverless invocation.
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running locally on port ${PORT}`);
-});
+// Start the server only once

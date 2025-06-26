@@ -1,10 +1,19 @@
-import mongoose from "mongoose";
-import { Admin } from "../Model/AdminModel.js";
-import Patient from "../Model/PatientsModel.js";
-import Report from "../Model/ReportsModel.js";
-import Feedback from "../Model/FeedbackModel.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+// import mongoose from "mongoose";
+// import { Admin } from "../Model/AdminModel.js";
+// import Patient from "../Model/PatientsModel.js";
+// import Report from "../Model/ReportsModel.js";
+// import Feedback from "../Model/FeedbackModel.js";
+// import bcrypt from "bcryptjs";
+// import jwt from "jsonwebtoken";
+
+const mongoose = require("mongoose");
+const { Admin } = require("../Model/AdminModel.js");
+const Patient = require("../Model/PatientsModel.js");
+const Report = require("../Model/ReportsModel.js");
+const Feedback = require("../Model/FeedbackModel.js");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
 
 // Admin Registration
 const registerAdmin = async (req, res) => {
@@ -93,7 +102,6 @@ const getAllPatients = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch patients", error: error.message });
   }
 };
-export { getAllPatients };
 
 
 // Activate / Deactivate Patient Account
@@ -143,8 +151,9 @@ const deletePatient = async (req, res) => {
   }
 };
 
-export {
+module.exports = {
   registerAdmin,
+  getAllPatients,
   loginAdmin,
   getAdminProfile,
   getAdminDashboard,

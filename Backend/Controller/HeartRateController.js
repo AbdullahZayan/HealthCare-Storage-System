@@ -1,7 +1,9 @@
-import HeartRateModel from "../Model/HeartRateModel.js";
+// import HeartRateModel from "../Model/HeartRateModel.js";
+
+const HeartRateModel = require("../Model/HeartRateModel.js");
 
 // 1) Add a heart rate entry
-export const addHeartRate = async (req, res) => {
+ const addHeartRate = async (req, res) => {
   try {
     const patientId = req.user.id; // from JWT
     const { value, date } = req.body;
@@ -32,7 +34,7 @@ export const addHeartRate = async (req, res) => {
 };
 
 // 2) Get all heart rate entries for this patient
-export const getHeartRateHistory = async (req, res) => {
+ const getHeartRateHistory = async (req, res) => {
   try {
     const patientId = req.user.id; // from JWT
     // For example, let's just get them sorted by date ascending
@@ -43,3 +45,5 @@ export const getHeartRateHistory = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+module.exports = {addHeartRate, getHeartRateHistory};

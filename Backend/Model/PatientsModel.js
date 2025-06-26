@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
+const mongoose = require("mongoose");
+
 
 const PatientSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
@@ -14,4 +16,5 @@ const PatientSchema = new mongoose.Schema({
     reminderSent: { type: Boolean, default: false }
 });
 
-export default mongoose.model("Patient", PatientSchema);
+// export default mongoose.model("Patient", PatientSchema);
+module.exports = mongoose.model("Patient", PatientSchema)

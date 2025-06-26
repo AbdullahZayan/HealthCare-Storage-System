@@ -1,5 +1,9 @@
-import express from "express";
-import dialogflow from "@google-cloud/dialogflow";
+// import express from "express";
+// import dialogflow from "@google-cloud/dialogflow";
+
+const express = require("express");
+const dialogflow = require("@google-cloud/dialogflow");
+
 
 const router = express.Router();
 const sessionClient = new dialogflow.SessionsClient();
@@ -32,4 +36,4 @@ console.log("📛 Project ID resolved:", projectId); // 🔍 check this line
 }
 });
 
-export default router;
+module.exports = router;

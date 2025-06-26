@@ -1,10 +1,14 @@
-import ReportModel from "../Model/ReportsModel.js";
-import path from "path";
-// import { fileURLToPath } from "url";
-import fs from "fs";
+// import ReportModel from "../Model/ReportsModel.js";
+// import path from "path";
+// // import { fileURLToPath } from "url";
+// import fs from "fs";
+
+const ReportModel = require("../Model/ReportsModel.js");
+const path = require("path");
+const fs = require("fs");
 
 // Upload Report
-export const uploadReport = async (req, res) => {
+const uploadReport = async (req, res) => {
     try {
         console.log("Received file:", req.file);
         console.log("Request body:", req.body);
@@ -40,7 +44,7 @@ export const uploadReport = async (req, res) => {
 };
 
 // Get All Reports for a Patient
-export const getReports = async (req, res) => {
+const getReports = async (req, res) => {
     try {
         const patientId = req.user.id;
         const reports = await ReportModel.find({ patientId });
@@ -51,7 +55,7 @@ export const getReports = async (req, res) => {
 };
 
 // Add Comment to a Report
-export const addComment = async (req, res) => {
+const addComment = async (req, res) => {
     try {
         const reportId = req.params.reportId.trim();
         const { text, author } = req.body;
@@ -76,7 +80,7 @@ export const addComment = async (req, res) => {
 };
 
 // Download a Report
-export const downloadReport = async (req, res) => {
+const downloadReport = async (req, res) => {
     try {
         const reportId = req.params.reportId.trim();
         const report = await ReportModel.findById(reportId);
@@ -107,3 +111,6 @@ export const downloadReport = async (req, res) => {
         res.status(500).json({ message: "Failed to download report", error: error.message });
     }
 };
+
+
+module.exports = {uploadReport, getReports, addComment, downloadReport};

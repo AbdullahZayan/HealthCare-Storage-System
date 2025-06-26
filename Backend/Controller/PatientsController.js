@@ -1,14 +1,25 @@
-import PatientModel from "../Model/PatientsModel.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
-import nodemailer from "nodemailer"
-import cron from "node-cron";
+// import PatientModel from "../Model/PatientsModel.js";
+// import bcrypt from "bcrypt";
+// import jwt from "jsonwebtoken";
+// import multer from "multer";
+// import path from "path";
+// import fs from "fs";
+// import nodemailer from "nodemailer"
+// import cron from "node-cron";
+
+
+const PatientModel = require("../Model/PatientsModel.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const nodemailer = require("nodemailer");
+const cron = require("node-cron");
+
 
 // ===================== Register Function =====================
-export const register = async (req, res) => {
+const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
 
@@ -51,7 +62,7 @@ export const register = async (req, res) => {
 };
 
 // ===================== Login Function =====================
-export const login = async (req, res) => {
+const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -102,10 +113,10 @@ const storage = multer.diskStorage({
     }
 });
 
-export const upload = multer({ storage }).single("profilePicture");
+const upload = multer({ storage }).single("profilePicture");
 
 // ===================== Edit Profile Function =====================
-export const editProfile = async (req, res) => {
+const editProfile = async (req, res) => {
     try {
         const { firstName, lastName, allergies, chronicConditions } = req.body;
         const patientId = req.user.id;
@@ -134,7 +145,7 @@ export const editProfile = async (req, res) => {
 };
 
 // ===================== Get Patient Profile =====================
-export const getPatientProfile = async (req, res) => {
+const getPatientProfile = async (req, res) => {
     try {
         const patientId = req.user.id;
 
@@ -152,7 +163,7 @@ export const getPatientProfile = async (req, res) => {
 
 // ===================== Set Check-Up Date =====================
 
-export const setCheckupDate = async (req, res) => {
+const setCheckupDate = async (req, res) => {
   try {
     const { checkupDate, checkupEmail } = req.body;
     const patientId = req.user.id;
@@ -213,3 +224,4 @@ export const setCheckupDate = async (req, res) => {
   }
 };
 
+module.exports ={register, login, upload, editProfile, getPatientProfile, setCheckupDate};

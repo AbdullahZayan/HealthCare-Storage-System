@@ -1,7 +1,9 @@
-import FeedbackModel from "../Model/FeedbackModel.js";
+// import FeedbackModel from "../Model/FeedbackModel.js";
+const FeedbackModel = require("../Model/FeedbackModel.js");
+
 
 // ===================== Submit Feedback =====================
-export const submitFeedback = async (req, res) => {
+const submitFeedback = async (req, res) => {
     try {  
         const { message } = req.body;
         const patientId = req.user.id;
@@ -21,7 +23,7 @@ export const submitFeedback = async (req, res) => {
 };
 
 // ===================== Get All Feedback (Admin Only) =====================
-export const getAllFeedback = async (req, res) => {
+const getAllFeedback = async (req, res) => {
     try {
         const feedbackList = await FeedbackModel.find().populate("patientId", "firstName lastName email");
         res.status(200).json(feedbackList);
@@ -30,3 +32,7 @@ export const getAllFeedback = async (req, res) => {
         res.status(500).json({ message: "Failed to fetch feedback", error: error.message });
     }
 };
+
+
+module.exports = {
+    submitFeedback, getAllFeedback}

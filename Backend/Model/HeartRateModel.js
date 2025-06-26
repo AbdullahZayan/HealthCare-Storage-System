@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
+const mongoose = require("mongoose");
+
 
 const heartRateSchema = new mongoose.Schema({
   patientId: {
@@ -17,4 +19,6 @@ const heartRateSchema = new mongoose.Schema({
 });
 
 
-export default mongoose.model("HeartRate", heartRateSchema);
+// export default mongoose.model("HeartRate", heartRateSchema);
+module.exports = mongoose.model("HeartRate", heartRateSchema)
+

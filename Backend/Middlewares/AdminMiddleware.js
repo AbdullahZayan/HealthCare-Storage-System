@@ -1,7 +1,9 @@
-import jwt from "jsonwebtoken";
-import { Admin } from "../Model/AdminModel.js";
+// import jwt from "jsonwebtoken";
+// import { Admin } from "../Model/AdminModel.js";
+const jwt = require("jsonwebtoken");
+const { Admin } = require("../Model/AdminModel.js");
 
-export const protectAdmin = async (req, res, next) => {
+ const protectAdmin = async (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     try {
@@ -24,3 +26,5 @@ export const protectAdmin = async (req, res, next) => {
     return res.status(401).json({ message: "Not authorized, no token" });
   }
 };
+
+module.exports = { protectAdmin };
