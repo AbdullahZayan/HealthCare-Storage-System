@@ -100,22 +100,22 @@ const login = async (req, res) => {
 
 // ===================== Profile Picture Upload =====================
 // const profilePicturesDir = "uploads/profile_pictures";
-const profilePicturesDir = path.join('/tmp', 'profile_pictures');
+// const profilePicturesDir = path.join('/tmp', 'profile_pictures');
 
-if (!fs.existsSync(profilePicturesDir)) {
-    fs.mkdirSync(profilePicturesDir, { recursive: true });
-}
+// if (!fs.existsSync(profilePicturesDir)) {
+//     fs.mkdirSync(profilePicturesDir, { recursive: true });
+// }
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, profilePicturesDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`);
-    }
-});
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, profilePicturesDir);
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`);
+//     }
+// });
 
-const upload = multer({ storage }).single("profilePicture");
+// const upload = multer({ storage }).single("profilePicture");
 
 // ===================== Edit Profile Function =====================
 const editProfile = async (req, res) => {
@@ -226,4 +226,6 @@ const setCheckupDate = async (req, res) => {
   }
 };
 
-module.exports ={register, login, upload, editProfile, getPatientProfile, setCheckupDate};
+module.exports ={register, login, editProfile, getPatientProfile, setCheckupDate};
+
+// upload
