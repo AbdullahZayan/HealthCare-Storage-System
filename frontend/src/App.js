@@ -18,7 +18,7 @@ import "./globals.css";
 
 function App() {
   const api = process.env.REACT_APP_API_URL;
-  // console.log("🧪 API dsf in frontend:", api);
+  console.log("🧪 API dsf in frontend:", api);
 
   return (
     <Router>

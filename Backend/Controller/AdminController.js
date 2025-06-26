@@ -7,7 +7,7 @@
 // import jwt from "jsonwebtoken";
 
 const mongoose = require("mongoose");
-const { Admin } = require("../Model/AdminModel.js");
+const Admin  = require("../Model/AdminModel.js");
 const Patient = require("../Model/PatientsModel.js");
 const Report = require("../Model/ReportsModel.js");
 const Feedback = require("../Model/FeedbackModel.js");

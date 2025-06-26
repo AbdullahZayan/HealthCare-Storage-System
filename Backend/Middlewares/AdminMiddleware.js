@@ -1,7 +1,7 @@
 // import jwt from "jsonwebtoken";
 // import { Admin } from "../Model/AdminModel.js";
 const jwt = require("jsonwebtoken");
-const { Admin } = require("../Model/AdminModel.js");
+const Admin  = require("../Model/AdminModel.js");
 
  const protectAdmin = async (req, res, next) => {
   let token;
