@@ -2,20 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.js"
-    }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron/send-reminders",
-      "schedule": "0 6 * * *"
+      "src": "/(.*)",
+      "dest": "api/index.js"
     }
   ]
 }
