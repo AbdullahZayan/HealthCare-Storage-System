@@ -11,6 +11,8 @@ export default function Chatbot({ onClose, api }) {
   const [typing, setTyping] = useState(false);
   const scrollRef = useRef(null);
 
+console.log("Chatbot initialized with session ID:", api);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;

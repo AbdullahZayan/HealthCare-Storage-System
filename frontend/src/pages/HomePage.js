@@ -1187,7 +1187,7 @@ export default function HomePage({api}) {
   Need Help?Ask ChatBot ? 💬
 </footer>
 
-{showChatbot && <Chatbot onClose={() => setShowChatbot(false)} />}
+{showChatbot && <Chatbot onClose={() => setShowChatbot(false)} api={api} />}
 
 
 

@@ -26,9 +26,10 @@ console.log("📛 Project ID resolved:", projectId); // 🔍 check this line
     console.log("   reply=", response.queryResult.fulfillmentText);
     res.json({ reply: response.queryResult.fulfillmentText });
   } catch (err) {
-    console.error("💥 [Dialogflow] ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
+  console.error("💥 [Dialogflow] ERROR:", err.message);
+  console.error(err.stack);
+  res.status(500).json({ error: err.message });
+}
 });
 
 export default router;

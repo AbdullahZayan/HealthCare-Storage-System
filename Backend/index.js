@@ -22,7 +22,9 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-console.log("🔍 Credentials Path:", process.env.GOOGLE_CLOUD_PROJECT);
+// console.log("🔍 Credentials Path:", process.env.GOOGLE_CLOUD_PROJECT);
+console.log("🔍 Dialogflow Key Path:", process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
 
 // Ensure environment variables are loaded
 if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
@@ -38,6 +40,7 @@ mongoose
     console.error("❌ MongoDB Connection Error:", err);
     process.exit(1);
   });
+
 
 // Routes
 app.use("/api/patients", patientsRoutes);
