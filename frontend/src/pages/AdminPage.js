@@ -12,6 +12,11 @@ export default function Dashboard({api}) {
   const [feedback, setFeedback] = useState([])
   const [stats, setStats] = useState({ totalPatients: 0, totalReports: 0 })
 
+//   function getPatientName (patientId) {
+//   const patient = patients.find((p) => p._id === patientId);
+//   console.log(patientId,patients);
+//   return patient?.firstName + patient?.lastName
+// }
 
   // ✅ Destructure stats immediately so they are in scope
   const { totalPatients, totalReports } = stats
@@ -93,6 +98,26 @@ export default function Dashboard({api}) {
     localStorage.removeItem("token");
     window.location.href = "/admin-login"; // Ensure redirection to admin login page
   };
+
+  function formatTimestamp(isoString) {
+  const date = new Date(isoString);
+
+
+    if (isNaN(date.getTime())) {
+    return "Old User";
+  }
+
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = date.toLocaleString('en-GB', { month: 'long' });
+  const year = date.getFullYear();
+
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  return `${day} ${month}, ${year} - ${hours}:${minutes}:${seconds}`;
+}
+
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -320,9 +345,9 @@ export default function Dashboard({api}) {
                       d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                     />
                   </svg>
-                  Bar Chart
+                 Clustered Bar Chart
                 </button>
-                <button
+                {/* <button
                   onClick={() => setActiveChart("line")}
                   className={`px-3 py-1.5 text-sm rounded-md flex items-center ${activeChart === "line" ? "bg-teal-50 text-teal-700 font-medium" : "text-gray-600 hover:bg-gray-50"}`}
                 >
@@ -341,7 +366,7 @@ export default function Dashboard({api}) {
                     />
                   </svg>
                   Line Chart
-                </button>
+                </button> */}
                 <button
                   onClick={() => setActiveChart("pie")}
                   className={`px-3 py-1.5 text-sm rounded-md flex items-center ${activeChart === "pie" ? "bg-teal-50 text-teal-700 font-medium" : "text-gray-600 hover:bg-gray-50"}`}
@@ -426,152 +451,7 @@ export default function Dashboard({api}) {
               )}
 
               {/* Line Chart */}
-              {activeChart === "line" && (
-                <div className="mt-6">
-                  <div className="h-64 w-full">
-                    <svg className="w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none">
-                      {/* Grid lines */}
-                      <g className="grid">
-                        {[0, 1, 2, 3, 4].map((i) => (
-                          <line
-                            key={`h-${i}`}
-                            x1="0"
-                            y1={i * 50}
-                            x2="400"
-                            y2={i * 50}
-                            stroke="#e5e7eb"
-                            strokeWidth="1"
-                          />
-                        ))}
-                        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                          <line
-                            key={`v-${i}`}
-                            x1={i * 50}
-                            y1="0"
-                            x2={i * 50}
-                            y2="200"
-                            stroke="#e5e7eb"
-                            strokeWidth="1"
-                          />
-                        ))}
-                      </g>
-
-                      {/* Y-axis labels */}
-                      <text x="5" y="15" fontSize="10" fill="#6b7280">
-                        20
-                      </text>
-                      <text x="5" y="65" fontSize="10" fill="#6b7280">
-                        15
-                      </text>
-                      <text x="5" y="115" fontSize="10" fill="#6b7280">
-                        10
-                      </text>
-                      <text x="5" y="165" fontSize="10" fill="#6b7280">
-                        5
-                      </text>
-                      <text x="5" y="195" fontSize="10" fill="#6b7280">
-                        0
-                      </text>
-
-                      {/* X-axis labels */}
-                      <text x="50" y="195" fontSize="10" fill="#6b7280">
-                        Jan
-                      </text>
-                      <text x="100" y="195" fontSize="10" fill="#6b7280">
-                        Feb
-                      </text>
-                      <text x="150" y="195" fontSize="10" fill="#6b7280">
-                        Mar
-                      </text>
-                      <text x="200" y="195" fontSize="10" fill="#6b7280">
-                        Apr
-                      </text>
-                      <text x="250" y="195" fontSize="10" fill="#6b7280">
-                        May
-                      </text>
-                      <text x="300" y="195" fontSize="10" fill="#6b7280">
-                        Jun
-                      </text>
-                      <text x="350" y="195" fontSize="10" fill="#6b7280">
-                        Jul
-                      </text>
-
-                      {/* Active Patients Line */}
-                      <polyline
-                        points="50,150 100,130 150,120 200,100 250,90 300,70 350,60"
-                        fill="none"
-                        stroke="#3b82f6"
-                        strokeWidth="2"
-                      />
-                      <g>
-                        {[50, 100, 150, 200, 250, 300, 350].map((x, i) => (
-                          <circle
-                            key={`ap-${i}`}
-                            cx={x}
-                            cy={[150, 130, 120, 100, 90, 70, 60][i]}
-                            r="3"
-                            fill="#3b82f6"
-                          />
-                        ))}
-                      </g>
-
-                      {/* Medical Reports Line */}
-                      <polyline
-                        points="50,160 100,140 150,130 200,110 250,100 300,80 350,70"
-                        fill="none"
-                        stroke="#10b981"
-                        strokeWidth="2"
-                      />
-                      <g>
-                        {[50, 100, 150, 200, 250, 300, 350].map((x, i) => (
-                          <circle
-                            key={`mr-${i}`}
-                            cx={x}
-                            cy={[160, 140, 130, 110, 100, 80, 70][i]}
-                            r="3"
-                            fill="#10b981"
-                          />
-                        ))}
-                      </g>
-
-                      {/* Feedback Line */}
-                      <polyline
-                        points="50,170 100,160 150,150 200,140 250,130 300,120 350,110"
-                        fill="none"
-                        stroke="#f59e0b"
-                        strokeWidth="2"
-                      />
-                      <g>
-                        {[50, 100, 150, 200, 250, 300, 350].map((x, i) => (
-                          <circle
-                            key={`fb-${i}`}
-                            cx={x}
-                            cy={[170, 160, 150, 140, 130, 120, 110][i]}
-                            r="3"
-                            fill="#f59e0b"
-                          />
-                        ))}
-                      </g>
-                    </svg>
-
-                    {/* Legend */}
-                    <div className="flex justify-center mt-2 space-x-6">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full mr-1"></div>
-                        <span className="text-xs text-gray-600">Active Patients</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div>
-                        <span className="text-xs text-gray-600">Medical Reports</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-amber-500 rounded-full mr-1"></div>
-                        <span className="text-xs text-gray-600">Feedback</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              
 
               {/* Pie Chart */}
               {activeChart === "pie" && (
@@ -652,12 +532,12 @@ export default function Dashboard({api}) {
                     >
                       Status
                     </th>
-                    <th
+                    {/* <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
                       Reports
-                    </th>
+                    </th> */}
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -692,8 +572,7 @@ export default function Dashboard({api}) {
         {patient.status}
       </span>
     </td>
-    <td className="px-6 py-4 whitespace-nowrap text-gray-500">-</td> {/* Reports column placeholder */}
-    <td className="px-6 py-4 whitespace-nowrap text-gray-500">-</td> {/* Last visit placeholder */}
+    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{formatTimestamp(patient.lastLogin)}</td> {/* Last visit placeholder */}
     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
       <div className="flex justify-end gap-2">
         <button
@@ -760,11 +639,14 @@ export default function Dashboard({api}) {
     className="border rounded-lg p-4 cursor-pointer hover:bg-gray-50"
     onClick={() => openFeedback(item)}
   >
+    
     <div className="flex justify-between">
    <h4 className="text-base font-medium">
+      {console.log(patients._id === item.patientId)}
   {item.patientId?.firstName || item.patientId?.lastName
     ? `${item.patientId.firstName || ""} ${item.patientId.lastName || ""}`.trim()
     : "Unknown"}
+    {/* {getPatientName(item.patientId)} */}
 </h4>
 
 

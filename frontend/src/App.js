@@ -16,9 +16,14 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Chatbot from "./pages/ChatBot";
 import "./globals.css";
 
+ 
+
+
+// here you can change between local and server :)
+
 function App() {
-  const api = process.env.REACT_APP_API_URL;
-  console.log("🧪 API dsf in frontend:", api);
+  // const api = process.env.REACT_APP_API_URL;
+  const api ="http://localhost:5000";
 
   return (
     <Router>
@@ -72,3 +77,7 @@ function App() {
 }
 
 export default App;
+
+
+
+

@@ -265,10 +265,10 @@ export default function HomePage({api}) {
                   d="M19.5 4.5c0 2.485-2.015 4.5-4.5 4.5s-4.5-2.015-4.5-4.5 2.015-4.5 4.5-4.5 4.5 2.015 4.5 4.5zM16.5 8.25V16.5c0 2.25-2.25 4.5-4.5 4.5s-4.5-2.25-4.5-4.5v-3.75m9-4.5H4.5c-.967 0-1.75-.784-1.75-1.75s.783-1.75 1.75-1.75h12.5c.967 0 1.75.784 1.75 1.75s-.783 1.75-1.75 1.75z"
                 />
               </svg>
-              <span className="text-blue-700">HealthCare Storage</span>
+              <span className=" text-blue-700">HealthCare Storage</span>
             </Link>
           </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
+          <nav className="flex items-center gap-6 text-sm">
             <Link
               to="/home"
               className="font-medium transition-colors hover:text-blue-600 flex items-center gap-1"
@@ -288,11 +288,11 @@ export default function HomePage({api}) {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              Home
+              <p className="hidden md:flex">Home</p>
             </Link>
             <Link
               to="/heartrate"
-              className="font-medium transition-colors hover:text-blue-600 flex items-center gap-1"
+              className=" font-medium transition-colors hover:text-blue-600 flex items-center gap-1"
             >
               {/* Activity icon */}
               <svg
@@ -309,12 +309,13 @@ export default function HomePage({api}) {
                   d="M13 10V3L4 14h7v7l9-11h-7z"
                 />
               </svg>
-              HeartRate Dashboard
+
+              <p className="hidden md:flex">HeartRate Dashboard</p>
+
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-blue-700 hover:bg-blue-100 rounded-full">
-              {/* Bell icon */}
+            {/* <button className="relative p-2 text-blue-700 hover:bg-blue-100 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -331,7 +332,7 @@ export default function HomePage({api}) {
               </svg>
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-600"></span>
               <span className="sr-only">Notifications</span>
-            </button>
+            </button> */}
             <div className="relative">
               <button
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}

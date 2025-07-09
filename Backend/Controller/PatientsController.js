@@ -62,6 +62,42 @@ const register = async (req, res) => {
 };
 
 // ===================== Login Function =====================
+// const login = async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
+
+//         if (!email || !password) {
+//             return res.status(400).json({ message: "Email and password are required!" });
+//         }
+
+//         const patient = await PatientModel.findOne({ email });
+//         if (!patient) {
+//             return res.status(400).json({ message: "Incorrect email or password!" });
+//         }
+
+//         const isMatch = await bcrypt.compare(password, patient.password);
+//         if (!isMatch) {
+//             return res.status(400).json({ message: "Incorrect email or password!" });
+//         }
+
+//         if (!process.env.JWT_SECRET) {
+//             console.error("❌ ERROR: JWT_SECRET is not set in .env file!");
+//             return res.status(500).json({ message: "Server configuration error." });
+//         }
+
+//         const token = jwt.sign(
+//             { id: patient._id, email, firstName: patient.firstName, lastName: patient.lastName },
+//             process.env.JWT_SECRET,
+//             { expiresIn: "1h" }
+//         );
+
+//         res.status(200).json({ token });
+//     } catch (error) {
+//         console.error("❌ ERROR in Login Function:", error);
+//         res.status(500).json({ message: "Something went wrong!", error: error.message });
+//     }
+// };
+
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -74,6 +110,14 @@ const login = async (req, res) => {
         if (!patient) {
             return res.status(400).json({ message: "Incorrect email or password!" });
         }
+
+        // ✅ NEW: Block login if account is deactivated
+        if (patient.status === "deactivated") {
+            return res.status(403).json({ message: "Your account is deactivated. Please contact the administrator +601139839391." });
+        }
+        // ✅ NEW: Update last login time
+        patient.lastLogin = new Date();
+        await patient.save();
 
         const isMatch = await bcrypt.compare(password, patient.password);
         if (!isMatch) {

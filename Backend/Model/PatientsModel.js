@@ -13,7 +13,8 @@ const PatientSchema = new mongoose.Schema({
     profilePicture: { type: String, default: "" }, //(URL for profile picture)
     status: { type: String, enum: ["active", "deactivated"], default: "active" },
     lastCheckupDate: { type: Date },
-    reminderSent: { type: Boolean, default: false }
+    reminderSent: { type: Boolean, default: false },
+    lastLogin: { type: Date }
 });
 
 // export default mongoose.model("Patient", PatientSchema);
